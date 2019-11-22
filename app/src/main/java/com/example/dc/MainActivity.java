@@ -3,12 +3,47 @@ package com.example.dc;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private EditText stdin;
+    private TextView stdout, stderr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        stdin = findViewById(R.id.etInput);
+        stdout = findViewById(R.id.tvOutput);
+        stderr = stdout;
+
+        // https://stackoverflow.com/a/4889059/6627273
+        TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_NULL
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    onEnter();
+                }
+                return true;
+            }
+        };
+        stdin.setOnEditorActionListener(enterListener);
+    }
+
+    /**
+     * This function runs whenever a line ends.
+     * TODO add better description of what functionality this should implement
+     */
+    public void onEnter() {
+        String input = stdin.getText().toString();
+        if(input.equals("")) return;
+        stdin.setText("");
+        stdout.append("\n"+input);
     }
 }
