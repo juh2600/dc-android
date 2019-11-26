@@ -8,10 +8,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText stdin;
     private TextView stdout, stderr;
+
+    private Stack<Character> mainStack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +26,13 @@ public class MainActivity extends AppCompatActivity {
         stdin = findViewById(R.id.etInput);
         stdout = findViewById(R.id.tvOutput);
         stderr = stdout;
-
-        // https://stackoverflow.com/a/4889059/6627273
+        mainStack = new Stack<>();
+        //https://stackoverflow.com/a/4889059/6627273
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_NULL
-                && event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (actionId == EditorInfo.IME_NULL
+                        && event.getAction() == KeyEvent.ACTION_DOWN) {
                     onEnter();
                 }
                 return true;
@@ -42,14 +47,28 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onEnter() {
         String input = stdin.getText().toString();
+        stdin.setText("");
+        stdout.append("\n" + input);
         // ignore empty input
-        if(input.equals("")) return;
+        if (input.equals("")) return;
 
         // elementary parsing of tokens
-        for(Character c : input.toCharArray()) {
-            stdout.append("\n" + c);
+        for (Character c : input.toCharArray()) {
+            switch (c) {
+                case '?':
+                    // TODO add docs
+                    break;
+                case 'c':
+                    mainStack.clear();
+                    break;
+                case 'f':
+                    for(int i = mainStack.size(); i-->0;) {
+                        stdout.append("\n" + mainStack.get(i));
+                    }
+                    break;
+                default:
+                    mainStack.push(c);
+            }
         }
-        stdin.setText("");
-        stdout.append("\n"+input);
     }
 }
