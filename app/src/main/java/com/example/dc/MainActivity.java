@@ -42,7 +42,13 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onEnter() {
         String input = stdin.getText().toString();
+        // ignore empty input
         if(input.equals("")) return;
+
+        // elementary parsing of tokens
+        for(Character c : input.toCharArray()) {
+            stdout.append("\n" + c);
+        }
         stdin.setText("");
         stdout.append("\n"+input);
     }
