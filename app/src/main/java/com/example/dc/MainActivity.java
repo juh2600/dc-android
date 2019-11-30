@@ -3,6 +3,7 @@ package com.example.dc;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         stdout = findViewById(R.id.tvOutput);
         stderr = stdout;
         mainStack = new Stack<>();
+        //https://stackoverflow.com/a/3256305/6627273
+        stdout.setMovementMethod(new ScrollingMovementMethod());
         //https://stackoverflow.com/a/4889059/6627273
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
             @Override
