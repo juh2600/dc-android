@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
         stdout = findViewById(R.id.tvOutput);
         stderr = stdout;
         mainStack = new Stack<>();
-        //https://stackoverflow.com/a/3256305/6627273
+        // https://stackoverflow.com/a/3256305/6627273
         stdout.setMovementMethod(new ScrollingMovementMethod());
-        //https://stackoverflow.com/a/4889059/6627273
+        // https://stackoverflow.com/a/4889059/6627273
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
