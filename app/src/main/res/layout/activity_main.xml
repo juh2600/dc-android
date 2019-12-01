@@ -28,8 +28,9 @@
         android:background="#000000"
         android:fontFamily="monospace"
         android:gravity="bottom|start"
-        android:textColor="#00FF00"
         android:scrollbars="vertical"
+        android:text="Starting..."
+        android:textColor="#00FF00"
         app:layout_constraintBottom_toTopOf="@+id/etInput"
         tools:layout_editor_absoluteX="153dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

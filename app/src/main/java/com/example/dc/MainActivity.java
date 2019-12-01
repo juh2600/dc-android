@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView stdout, stderr;
 
     private Stack<Character> mainStack;
+    private Calculator calc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         stdout = findViewById(R.id.tvOutput);
         stderr = stdout;
         mainStack = new Stack<>();
+        calc = new Calculator();
         //https://stackoverflow.com/a/4889059/6627273
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
             @Override
@@ -55,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
         // elementary parsing of tokens
         for (Character c : input.toCharArray()) {
             switch (c) {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    calc.performOperation(mainStack);
+                    break;
                 case '?':
                     // TODO add docs
                     break;
@@ -62,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     mainStack.clear();
                     break;
                 case 'f':
-                    for(int i = mainStack.size(); i-->0;) {
+                    for (int i = mainStack.size(); i-- > 0; ) {
                         stdout.append("\n" + mainStack.get(i));
                     }
                     break;
