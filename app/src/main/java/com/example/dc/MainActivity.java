@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         stdin.setOnEditorActionListener(enterListener);
     }
 
+    // https://stackoverflow.com/a/8423728/6627273
+    class EmptyStackException extends Exception {
+        EmptyStackException() {}
+        EmptyStackException(String msg) { super(msg); }
+    }
+
     /**
      * This function runs whenever a line ends.
      * TODO add better description of what functionality this should implement
