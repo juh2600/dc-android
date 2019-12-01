@@ -64,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         // elementary parsing of tokens
         for (Character c : input.toCharArray()) {
             switch (c) {
+                case ' ':
+                case '\t':
+                case '\n':
+                    break;
                 case '?':
                     // TODO add docs
                     break;
