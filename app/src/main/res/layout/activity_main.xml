@@ -21,6 +21,7 @@
         android:textColor="#00FF00"
         android:textColorHint="#669966"
         android:textSize="14sp"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
