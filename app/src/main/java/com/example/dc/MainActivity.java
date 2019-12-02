@@ -43,14 +43,30 @@ public class MainActivity extends AppCompatActivity {
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_NULL
-                        && event.getAction() == KeyEvent.ACTION_DOWN) {
+                boolean actionIdMatches = (
+                           actionId == EditorInfo.IME_NULL
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || actionId == EditorInfo.IME_ACTION_GO
+                        || actionId == EditorInfo.IME_ACTION_NEXT
+                        || actionId == EditorInfo.IME_ACTION_SEND
+                        || actionId == EditorInfo.IME_ACTION_SEARCH
+                        );
+                boolean actionMatches = (
+                        event.getAction() == KeyEvent.ACTION_UP
+                );
+                boolean keyCodeMatches = (
+                           event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                        || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
+                        );
+                if (actionIdMatches && actionMatches && keyCodeMatches) {
                     onEnter();
                 }
                 return true;
             }
         };
         stdin.setOnEditorActionListener(enterListener);
+
+        cout("Ready to comply.");
     }
 
     private TextView cout(String s) {
