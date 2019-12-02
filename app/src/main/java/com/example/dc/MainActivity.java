@@ -44,22 +44,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean actionIdMatches = (
-                           actionId == EditorInfo.IME_NULL
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || actionId == EditorInfo.IME_ACTION_GO
-                        || actionId == EditorInfo.IME_ACTION_NEXT
-                        || actionId == EditorInfo.IME_ACTION_SEND
-                        || actionId == EditorInfo.IME_ACTION_SEARCH
-                        );
+                        actionId == EditorInfo.IME_NULL
+                                || actionId == EditorInfo.IME_ACTION_DONE
+                                || actionId == EditorInfo.IME_ACTION_GO
+                                || actionId == EditorInfo.IME_ACTION_NEXT
+                                || actionId == EditorInfo.IME_ACTION_SEND
+                                || actionId == EditorInfo.IME_ACTION_SEARCH
+                );
                 boolean actionMatches = (
-                           event == null
-                        || event.getAction() == KeyEvent.ACTION_UP
+                        event == null
+                                || event.getAction() == KeyEvent.ACTION_UP
                 );
                 boolean keyCodeMatches = (
-                           event == null
-                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER
-                        || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
-                        );
+                        event == null
+                                || event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                                || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
+                );
                 if (actionIdMatches && actionMatches && keyCodeMatches) {
                     onEnter();
                 }
@@ -129,53 +129,33 @@ public class MainActivity extends AppCompatActivity {
      * TODO add better description of what functionality this should implement
      */
     public void onEnter() {
-        String inputText = stdin.getText().toString();
-        stdin.setText("");
-        cout(inputText);
-        // ignore empty input
-        if (inputText.isEmpty()) return;
+        try {
+            String inputText = stdin.getText().toString();
+            stdin.setText("");
+            cout(inputText);
+            // ignore empty input
+            if (inputText.isEmpty()) return;
 
-        ArrayList<Character> input = new ArrayList<>();
-        for (Character c : inputText.toCharArray())
-            input.add(c);
+            ArrayList<Character> input = new ArrayList<>();
+            for (Character c : inputText.toCharArray())
+                input.add(c);
 
 
-        while (!input.isEmpty()) {
-            boolean readingNumber = false;
-            boolean negative = false;
-            BigDecimal number = BigDecimal.ZERO;
-            if (input.get(0).equals('_')) {
-                readingNumber = true;
-                negative = true;
-                input.remove(0);
-            }
-            while (!input.isEmpty() && nextCharIsDigit(input)) {
-                readingNumber = true;
-                try {
-                    BigDecimal nextDigit = charToBigDecimal(input.get(0));
-                    number = number.multiply(Radices.input);
-                    number = number.add(nextDigit);
+            while (!input.isEmpty()) {
+                boolean readingNumber = false;
+                boolean negative = false;
+                BigDecimal number = BigDecimal.ZERO;
+                if (input.get(0).equals('_')) {
+                    readingNumber = true;
+                    negative = true;
                     input.remove(0);
-                } catch (NumberFormatException e) {
-                    cerr("dc: failed to parse digit: " + input.get(0));
-                    input.remove(0);
-                    break;
-                } catch (Exception e) {
-                    cerr("dc: failed to parse digit: " + input.get(0));
-                    cerr(e.toString());
-                    input.remove(0);
-                    break;
                 }
-            }
-            if (!input.isEmpty() && input.get(0).equals('.')) {
-                readingNumber = true;
-                input.remove(0);
-                BigDecimal placeValue = BigDecimal.ONE;
                 while (!input.isEmpty() && nextCharIsDigit(input)) {
+                    readingNumber = true;
                     try {
                         BigDecimal nextDigit = charToBigDecimal(input.get(0));
-                        placeValue = placeValue.divide(Radices.input);
-                        number = number.add(nextDigit.multiply(placeValue));
+                        number = number.multiply(Radices.input);
+                        number = number.add(nextDigit);
                         input.remove(0);
                     } catch (NumberFormatException e) {
                         cerr("dc: failed to parse digit: " + input.get(0));
@@ -188,121 +168,153 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-            }
-
-            if (negative) {
-                number = number.negate();
-            }
-
-            if (readingNumber) {
-                mainStack.push(number);
-                continue;
-            }
-            // if we get this far, we're not reading a number right now. process a command
-            Character cmd = input.get(0);
-            input.remove(0);
-            try {
-                switch (cmd) {
-                    case ' ':
-                    case '\t':
-                    case '\n':
-                        break;
-                    case '#':
-                        return; // rest of line is comment; don't bother parsing it
-                    case '?':
-                        // TODO add docs
-                        break;
-                    case '+':
-                        validateStackDepth(2);
-                        mainStack.push(calc.add(mainStack.pop(), mainStack.pop()));
-                        break;
-                    case '-':
-                        validateStackDepth(2);
-                        mainStack.push(calc.subtract(mainStack.pop(), mainStack.pop()));
-                        break;
-                    case '*':
-                        validateStackDepth(2);
-                        mainStack.push(calc.multiply(mainStack.pop(), mainStack.pop()));
-                        break;
-                    case '/':
-                        validateStackDepth(2);
+                if (!input.isEmpty() && input.get(0).equals('.')) {
+                    readingNumber = true;
+                    input.remove(0);
+                    BigDecimal placeValue = BigDecimal.ONE;
+                    while (!input.isEmpty() && nextCharIsDigit(input)) {
                         try {
-                            mainStack.push(calc.divide(mainStack.pop(), mainStack.pop()));
-                        } catch (ArithmeticException e) {
-                            cerr("dc: BigDecimal: non-terminating decimal expansion in division :( giving up on life, goodbye numbers");
+                            BigDecimal nextDigit = charToBigDecimal(input.get(0));
+                            placeValue = placeValue.divide(Radices.input);
+                            number = number.add(nextDigit.multiply(placeValue));
+                            input.remove(0);
+                        } catch (NumberFormatException e) {
+                            cerr("dc: failed to parse digit: " + input.get(0));
+                            input.remove(0);
+                            break;
+                        } catch (Exception e) {
+                            cerr("dc: failed to parse digit: " + input.get(0));
+                            cerr(e.toString());
+                            input.remove(0);
                             break;
                         }
-                        break;
-                    case '%':
-                        validateStackDepth(2);
-                        mainStack.push(calc.mod(mainStack.pop(), mainStack.pop()));
-                        break;
-                    case '^':
-                        validateStackDepth(2);
-                        if (mainStack.peek().scale() != 0) {
-                            cerr("dc: runtime warning: non-zero scale in exponent");
-                        }
-                        mainStack.push(calc.pow(mainStack.pop(), mainStack.pop()));
-                        break;
-                    case 'k':
-                        validateStackDepth(1);
-                        calc.setScale((mainStack.pop().intValue()));
-                        break;
-                    case 'K':
-                        mainStack.push(new BigDecimal(calc.getScale()));
-                        break;
-                    case 'z':
-                        mainStack.push(new BigDecimal(mainStack.size()));
-                        break;
-                    case 'Z':
-                        validateStackDepth(1);
-                        mainStack.push(new BigDecimal(mainStack.pop().precision()));
-                        break;
-                    case 'X':
-                        validateStackDepth(1);
-                        mainStack.push(new BigDecimal(mainStack.pop().scale()));
-                        break;
-                    case 'd':
-                        validateStackDepth(1);
-                        mainStack.push(mainStack.peek());
-                        break;
-                    case 'r':
-                        validateStackDepth(2);
-                        BigDecimal a = mainStack.pop(), b = mainStack.pop();
-                        mainStack.push(a);
-                        mainStack.push(b);
-                        break;
-                    case 'i':
-                        validateStackDepth(1);
-                        Radices.input = new BigDecimal(mainStack.pop().toBigInteger());
-                        break;
-                    case 'I':
-                        mainStack.push(Radices.input);
-                        break;
-                    case 'o':
-                        validateStackDepth(1);
-                        Radices.output = new BigDecimal(mainStack.pop().toBigInteger());
-                        // FIXME make use of output radix
-                        break;
-                    case 'O':
-                        mainStack.push(Radices.output);
-                        break;
-                    case 'c':
-                        mainStack.clear();
-                        break;
-                    case 'f':
-                        for (int i = mainStack.size(); i-- > 0; ) {
-                            cout(mainStack.get(i).toString());
-                        }
-                        break;
-                    default:
-                        cerr("dc: unknown command: " + cmd);
+                    }
                 }
 
-            } catch (EmptyStackException e) {
-                cerr("dc: stack empty");
-            }
+                if (negative) {
+                    number = number.negate();
+                }
 
+                if (readingNumber) {
+                    mainStack.push(number);
+                    continue;
+                }
+                // if we get this far, we're not reading a number right now. process a command
+                Character cmd = input.get(0);
+                input.remove(0);
+                try {
+                    switch (cmd) {
+                        case ' ':
+                        case '\t':
+                        case '\n':
+                            break;
+                        case '#':
+                            return; // rest of line is comment; don't bother parsing it
+                        case '?':
+                            // TODO add docs
+                            break;
+                        case '+':
+                            validateStackDepth(2);
+                            mainStack.push(calc.add(mainStack.pop(), mainStack.pop()));
+                            break;
+                        case '-':
+                            validateStackDepth(2);
+                            mainStack.push(calc.subtract(mainStack.pop(), mainStack.pop()));
+                            break;
+                        case '*':
+                            validateStackDepth(2);
+                            mainStack.push(calc.multiply(mainStack.pop(), mainStack.pop()));
+                            break;
+                        case '/':
+                            validateStackDepth(2);
+                            try {
+                                mainStack.push(calc.divide(mainStack.pop(), mainStack.pop()));
+                            } catch (ArithmeticException e) {
+                                cerr("dc: BigDecimal: non-terminating decimal expansion in division :( giving up on life, goodbye numbers");
+                                break;
+                            }
+                            break;
+                        case '%':
+                            validateStackDepth(2);
+                            mainStack.push(calc.mod(mainStack.pop(), mainStack.pop()));
+                            break;
+                        case '^':
+                            validateStackDepth(2);
+                            if (mainStack.peek().scale() != 0) {
+                                cerr("dc: runtime warning: non-zero scale in exponent");
+                            }
+                            mainStack.push(calc.pow(mainStack.pop(), mainStack.pop()));
+                            break;
+                        case '|':
+                            validateStackDepth(3);
+                            cerr("dc: | (modular exponentiation): unimplemented"); // TODO
+                            break;
+                        case 'v':
+                            validateStackDepth(1);
+                            cerr("dc: v (square root): unimplemented"); // TODO
+                            break;
+                        case 'k':
+                            validateStackDepth(1);
+                            calc.setScale((mainStack.pop().intValue()));
+                            break;
+                        case 'K':
+                            mainStack.push(new BigDecimal(calc.getScale()));
+                            break;
+                        case 'z':
+                            mainStack.push(new BigDecimal(mainStack.size()));
+                            break;
+                        case 'Z':
+                            validateStackDepth(1);
+                            mainStack.push(new BigDecimal(mainStack.pop().precision()));
+                            break;
+                        case 'X':
+                            validateStackDepth(1);
+                            mainStack.push(new BigDecimal(mainStack.pop().scale()));
+                            break;
+                        case 'd':
+                            validateStackDepth(1);
+                            mainStack.push(mainStack.peek());
+                            break;
+                        case 'r':
+                            validateStackDepth(2);
+                            BigDecimal a = mainStack.pop(), b = mainStack.pop();
+                            mainStack.push(a);
+                            mainStack.push(b);
+                            break;
+                        case 'i':
+                            validateStackDepth(1);
+                            Radices.input = new BigDecimal(mainStack.pop().toBigInteger());
+                            break;
+                        case 'I':
+                            mainStack.push(Radices.input);
+                            break;
+                        case 'o':
+                            validateStackDepth(1);
+                            Radices.output = new BigDecimal(mainStack.pop().toBigInteger());
+                            // TODO make use of output radix
+                            break;
+                        case 'O':
+                            mainStack.push(Radices.output);
+                            break;
+                        case 'c':
+                            mainStack.clear();
+                            break;
+                        case 'f':
+                            for (int i = mainStack.size(); i-- > 0; ) {
+                                cout(mainStack.get(i).toString());
+                            }
+                            break;
+                        default:
+                            cerr("dc: '" + cmd + "' (0" + Integer.toOctalString((int) cmd) + ") unimplemented");
+                    }
+
+                } catch (EmptyStackException e) {
+                    cerr("dc: stack empty");
+                }
+
+            }
+        } catch (Exception e) {
+            cerr(e.toString()); // we are invincible
         }
     }
 }

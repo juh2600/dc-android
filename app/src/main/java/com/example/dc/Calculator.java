@@ -28,6 +28,7 @@ public class Calculator {
 
     /**
      * Subtracts one number from another.
+     *
      * @param b subtrahend
      * @param a minuend
      * @return a - b
@@ -51,12 +52,13 @@ public class Calculator {
 
     /**
      * Divide one number by another, using the current precision value as the scale of the quotient.
+     *
      * @param b Divisor
      * @param a Dividend
      * @return a / b
      */
     public BigDecimal divide(BigDecimal b, BigDecimal a) {
-            return a.divide(b, scale, roundingMode);
+        return a.divide(b, scale, roundingMode);
     }
 
     /**
@@ -65,6 +67,7 @@ public class Calculator {
      * If we are working in a precision greater than zero, this may produce
      * initially unexpected results. For example, 1%2 gives 1 when precision
      * is zero, but for any greater precision, 1/2 yields 0.5, so 1%2 gives 0.
+     *
      * @param b Modulus
      * @param a Dividend
      * @return a % b
