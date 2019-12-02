@@ -15,10 +15,11 @@
         android:fontFamily="monospace"
         android:gravity="bottom|start"
         android:hint="&lt;Enter a command here&gt;"
-        android:inputType="text"
+        android:inputType="textNoSuggestions|textFilter"
+        android:importantForAutofill="no"
         android:maxLines="1"
         android:textColor="#00FF00"
-        android:textColorHint="#00FF00"
+        android:textColorHint="#669966"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp" />
