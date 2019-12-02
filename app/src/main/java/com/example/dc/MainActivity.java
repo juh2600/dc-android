@@ -44,22 +44,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean actionIdMatches = (
-                           actionId == EditorInfo.IME_NULL
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || actionId == EditorInfo.IME_ACTION_GO
-                        || actionId == EditorInfo.IME_ACTION_NEXT
-                        || actionId == EditorInfo.IME_ACTION_SEND
-                        || actionId == EditorInfo.IME_ACTION_SEARCH
-                        );
+                        actionId == EditorInfo.IME_NULL
+                                || actionId == EditorInfo.IME_ACTION_DONE
+                                || actionId == EditorInfo.IME_ACTION_GO
+                                || actionId == EditorInfo.IME_ACTION_NEXT
+                                || actionId == EditorInfo.IME_ACTION_SEND
+                                || actionId == EditorInfo.IME_ACTION_SEARCH
+                );
                 boolean actionMatches = (
-                           event == null
-                        || event.getAction() == KeyEvent.ACTION_UP
+                        event == null
+                                || event.getAction() == KeyEvent.ACTION_UP
                 );
                 boolean keyCodeMatches = (
-                           event == null
-                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER
-                        || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
-                        );
+                        event == null
+                                || event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                                || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
+                );
                 if (actionIdMatches && actionMatches && keyCodeMatches) {
                     onEnter();
                 }
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             break;
                         default:
-                            cerr("dc: '" + cmd + "' (0" + Integer.toOctalString((int)cmd) + ") unimplemented");
+                            cerr("dc: '" + cmd + "' (0" + Integer.toOctalString((int) cmd) + ") unimplemented");
                     }
 
                 } catch (EmptyStackException e) {
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             cerr(e.toString()); // we are invincible
         }
     }
