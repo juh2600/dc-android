@@ -183,28 +183,100 @@ public class MainActivity extends AppCompatActivity {
             // if we get this far, we're not reading a number right now. process a command
             Character cmd = input.get(0);
             input.remove(0);
-            switch (cmd) {
-                case ' ':
-                case '\t':
-                case '\n':
-                    break;
-                case '#':
-                    return; // rest of line is comment; don't bother parsing it
-                case '?':
-                    // TODO add docs
-                    break;
-                case 'c':
-                    mainStack.clear();
-                    break;
-                case 'f':
-                    for (int i = mainStack.size(); i-->0; ) {
-                        cout(mainStack.get(i).toString());
-                    }
-                    break;
-                default:
-                    cerr("dc: unknown command: " + cmd);
-            }
+            try {
+                switch (cmd) {
+                    case ' ':
+                    case '\t':
+                    case '\n':
+                        break;
+                    case '#':
+                        return; // rest of line is comment; don't bother parsing it
+                    case '?':
+                        // TODO add docs
+                        break;
+                    case '+':
+                        validateStackDepth(2);
+                        mainStack.push(calc.add(mainStack.pop(), mainStack.pop()));
+                        break;
+                    case '-':
+                        validateStackDepth(2);
+                        mainStack.push(calc.subtract(mainStack.pop(), mainStack.pop()));
+                        break;
+                    case '*':
+                        validateStackDepth(2);
+                        mainStack.push(calc.multiply(mainStack.pop(), mainStack.pop()));
+                        break;
+                    case '/':
+                        validateStackDepth(2);
+                        try {
+                            mainStack.push(calc.divide(mainStack.pop(), mainStack.pop()));
+                        } catch (ArithmeticException e) {
+                            cerr("dc: BigDecimal: non-terminating decimal expansion in division :( giving up on life, goodbye numbers");
+                            break;
+                        }
+                        break;
+                    case '%':
+                        validateStackDepth(2);
+                        mainStack.push(calc.mod(mainStack.pop(), mainStack.pop()));
+                        break;
+                    case 'k':
+                        validateStackDepth(1);
+                        calc.setPrecision((mainStack.pop().intValue()));
+                        break;
+                    case 'K':
+                        mainStack.push(new BigDecimal(calc.getPrecision()));
+                        break;
+                    case 'z':
+                        mainStack.push(new BigDecimal(mainStack.size()));
+                        break;
+                    case 'Z':
+                        validateStackDepth(1);
+                        mainStack.push(new BigDecimal(mainStack.pop().precision()));
+                        break;
+                    case 'X':
+                        validateStackDepth(1);
+                        mainStack.push(new BigDecimal(mainStack.pop().scale()));
+                        break;
+                    case 'd':
+                        validateStackDepth(1);
+                        mainStack.push(mainStack.peek());
+                        break;
+                    case 'r':
+                        validateStackDepth(2);
+                        BigDecimal a = mainStack.pop(), b = mainStack.pop();
+                        mainStack.push(a);
+                        mainStack.push(b);
+                        break;
+                    case 'i':
+                        validateStackDepth(1);
+                        Radices.input = new BigDecimal(mainStack.pop().toBigInteger());
+                        break;
+                    case 'I':
+                        mainStack.push(Radices.input);
+                        break;
+                    case 'o':
+                        validateStackDepth(1);
+                        Radices.output = new BigDecimal(mainStack.pop().toBigInteger());
+                        // FIXME make use of output radix
+                        break;
+                    case 'O':
+                        mainStack.push(Radices.output);
+                        break;
+                    case 'c':
+                        mainStack.clear();
+                        break;
+                    case 'f':
+                        for (int i = mainStack.size(); i-- > 0; ) {
+                            cout(mainStack.get(i).toString());
+                        }
+                        break;
+                    default:
+                        cerr("dc: unknown command: " + cmd);
+                }
 
+            } catch (EmptyStackException e) {
+                cerr("dc: stack empty");
+            }
 
         }
     }
