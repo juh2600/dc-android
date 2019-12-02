@@ -52,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
                         || actionId == EditorInfo.IME_ACTION_SEARCH
                         );
                 boolean actionMatches = (
-                        event.getAction() == KeyEvent.ACTION_UP
+                           event == null
+                        || event.getAction() == KeyEvent.ACTION_UP
                 );
                 boolean keyCodeMatches = (
-                           event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                           event == null
+                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER
                         || event.getKeyCode() == KeyEvent.KEYCODE_FORWARD
                         );
                 if (actionIdMatches && actionMatches && keyCodeMatches) {
