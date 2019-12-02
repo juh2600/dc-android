@@ -14,7 +14,7 @@
         android:ems="10"
         android:fontFamily="monospace"
         android:gravity="bottom|start"
-        android:hint="<Enter a command here>"
+        android:hint="&lt;Enter a command here&gt;"
         android:inputType="text"
         android:maxLines="1"
         android:textColor="#00FF00"
