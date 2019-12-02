@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BigDecimal charToBigDecimal(final Character c) {
         try {
-            return new BigDecimal(Integer.parseInt(""+c));
+            return new BigDecimal(Integer.parseInt("" + c));
         } catch (NumberFormatException e) {
             BigDecimal next;
             switch (c) {
@@ -97,6 +98,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void validateStackDepth(int depth, Stack<BigDecimal> stack) {
+        if (stack.size() < depth) throw new EmptyStackException();
+    }
+
+    private void validateStackDepth(int depth) {
+        validateStackDepth(depth, mainStack);
+    }
+
     /**
      * This function runs whenever a line ends.
      * TODO add better description of what functionality this should implement
@@ -104,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
     public void onEnter() {
         String inputText = stdin.getText().toString();
         stdin.setText("");
-        //stdout.append("\n" + inputText);
         cout(inputText);
         // ignore empty input
         if (inputText.isEmpty()) return;
@@ -165,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (negative) {
-                number = BigDecimal.ZERO.subtract(number);
+                number = number.negate();
             }
 
             if (readingNumber) {
