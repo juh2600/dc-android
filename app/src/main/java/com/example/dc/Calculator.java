@@ -72,4 +72,9 @@ public class Calculator {
     public BigDecimal mod(BigDecimal b, BigDecimal a) {
         return a.subtract(divide(b, a).multiply(b));
     }
+
+    public BigDecimal pow(BigDecimal b, BigDecimal a) {
+        int pow = b.intValue();
+        return a.pow(pow);
+    }
 }

@@ -219,6 +219,13 @@ public class MainActivity extends AppCompatActivity {
                         validateStackDepth(2);
                         mainStack.push(calc.mod(mainStack.pop(), mainStack.pop()));
                         break;
+                    case '^':
+                        validateStackDepth(2);
+                        if (mainStack.peek().scale() != 0) {
+                            cerr("dc: runtime warning: non-zero scale in exponent");
+                        }
+                        mainStack.push(calc.pow(mainStack.pop(), mainStack.pop()));
+                        break;
                     case 'k':
                         validateStackDepth(1);
                         calc.setScale((mainStack.pop().intValue()));
