@@ -221,10 +221,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 'k':
                         validateStackDepth(1);
-                        calc.setPrecision((mainStack.pop().intValue()));
+                        calc.setScale((mainStack.pop().intValue()));
                         break;
                     case 'K':
-                        mainStack.push(new BigDecimal(calc.getPrecision()));
+                        mainStack.push(new BigDecimal(calc.getScale()));
                         break;
                     case 'z':
                         mainStack.push(new BigDecimal(mainStack.size()));

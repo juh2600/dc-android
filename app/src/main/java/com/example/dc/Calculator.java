@@ -7,18 +7,19 @@ import java.util.Stack;
 
 public class Calculator {
 
-    private MathContext context;
+    private int scale;
+    private final RoundingMode roundingMode = RoundingMode.DOWN;
 
     public Calculator() {
-        context = new MathContext(0, RoundingMode.DOWN);
+        scale = 0;
     }
 
-    public void setPrecision(int k) {
-        context = new MathContext(k, RoundingMode.DOWN);
+    public void setScale(int k) {
+        scale = k;
     }
 
-    public int getPrecision() {
-        return context.getPrecision();
+    public int getScale() {
+        return scale;
     }
 
     public BigDecimal add(BigDecimal b, BigDecimal a) {
@@ -55,7 +56,7 @@ public class Calculator {
      * @return a / b
      */
     public BigDecimal divide(BigDecimal b, BigDecimal a) {
-            return a.divide(b, context).setScale(context.getPrecision(), context.getRoundingMode());
+            return a.divide(b, scale, roundingMode);
     }
 
     /**
@@ -69,18 +70,6 @@ public class Calculator {
      * @return a % b
      */
     public BigDecimal mod(BigDecimal b, BigDecimal a) {
-        return a.subtract(a.divide(b, context).multiply(b));
-        //I just woke up but i think this works??
-        /*
-        BigDecimal remainder = a.subtract(b);
-        while(remainder.compareTo(BigDecimal.ZERO) > 0) {
-            if(remainder.subtract(b).compareTo(BigDecimal.ZERO) < 0) {
-                return remainder;
-            } else {
-                remainder.subtract(b);
-            }
-        }
-        return remainder;
-         */
+        return a.subtract(divide(b, a).multiply(b));
     }
 }
