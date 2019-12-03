@@ -247,27 +247,34 @@ public class MainActivity extends AppCompatActivity {
                         case '#':
                             return; // rest of line is comment; don't bother parsing it
                         case '?':
+                            cout("# Mathematical Operations");
                             cout("+,-,*,/,% : Add, Subtract, Multiply, Divide, Mod");
+                            cout("^: a^b ");
+                            cout("|: Modular exponentiation (`a b c |' => a^b (mod c))");
+                            cout("v: Square root (not implemented)");
+                            cout("");
+                            cout("# Stack Operations");
                             cout("c: Clear the stack");
                             cout("f: Print all contents of the stack");
-                            cout("^: a^b ");
-                            cout("v: Square root");
-                            cout("|: Current input base");
-                            cout("k: Set the scale factor");
-                            cout("K: Push the scale factor");
+                            cout("d: Duplicate the top of the stack");
+                            cout("r: Swap the top 2 values");
                             cout("z: Push the number of items");
                             cout("Z: Push the length of the top item");
                             cout("X: Replace top number with its scale factor");
-                            cout("d: Duplicate the top of the stack");
-                            cout("r: Swap the top 2 values");
+                            cout("");
+                            cout("# Settings");
+                            cout("k: Set the scale factor");
+                            cout("K: Push the scale factor");
                             cout("i: Change input base");
                             cout("I: Push current input base");
-                            cout("o: Change output base");
+                            cout("o: Change output base (unused)");
                             cout("O: Push current output base");
-                            cout("s"); //TODO: Add desc of s
-                            cout("S"); // TODO: Add desc of S
-                            cout("l"); // TODO: Add desc of l
-                            cout("L"); //TODO: Add desc of L
+                            cout("");
+                            cout("# Named Stacks");
+                            cout("sn: Pop one value and overwrite the top of stack `n' with it");
+                            cout("Sn: Pop one value and push it on stack `n'");
+                            cout("ln: Push a copy of the top of stack `n'");
+                            cout("Ln: Pop a value from stack `n' and push it");
                             break;
                         case '+':
                             validateStackDepth(2);
