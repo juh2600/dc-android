@@ -47,7 +47,7 @@ public class Calculator {
         int scaleA = a.scale();
         int scaleB = b.scale();
         int scale = Math.max(scaleA, scaleB);
-        return a.multiply(b, new MathContext(scale + precision, RoundingMode.DOWN));
+        return a.multiply(b, new MathContext(scale + precision, roundingMode));
     }
 
     /**
@@ -68,16 +68,32 @@ public class Calculator {
      * initially unexpected results. For example, 1%2 gives 1 when precision
      * is zero, but for any greater precision, 1/2 yields 0.5, so 1%2 gives 0.
      *
-     * @param b Modulus
+     * @param mod Modulus
      * @param a Dividend
      * @return a % b
      */
-    public BigDecimal mod(BigDecimal b, BigDecimal a) {
-        return a.subtract(divide(b, a).multiply(b));
+    public BigDecimal mod(BigDecimal mod, BigDecimal a) {
+        return a.subtract(divide(mod, a).multiply(mod));
     }
 
-    public BigDecimal pow(BigDecimal b, BigDecimal a) {
-        int pow = b.intValue();
-        return a.pow(pow);
+    public BigDecimal pow(int pow, BigDecimal base) {
+        return base.pow(pow);
     }
+
+    public BigDecimal modexp(BigDecimal mod, int pow, BigDecimal base) {
+        BigDecimal result = BigDecimal.ONE;
+        for(int i = 0; i < pow; i++) {
+            result = result.multiply(base);
+            result = mod(mod, result).setScale(base.scale(), roundingMode);
+        }
+        return result.setScale(base.scale(), roundingMode);
+    }
+
+    /*
+    public BigDecimal sqrt(BigDecimal a) {
+        if(a.compareTo(BigDecimal.ZERO) < 0) throw new ArithmeticException();
+        if(a.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+        // haha no
+    }
+     */
 }
