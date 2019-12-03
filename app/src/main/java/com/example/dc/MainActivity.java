@@ -3,6 +3,7 @@ package com.example.dc;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         stdin.setOnEditorActionListener(enterListener);
+
+        stdout.setMovementMethod(new ScrollingMovementMethod());
 
         cout("Ready to comply.");
     }
