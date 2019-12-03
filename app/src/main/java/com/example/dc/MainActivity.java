@@ -244,7 +244,27 @@ public class MainActivity extends AppCompatActivity {
                         case '#':
                             return; // rest of line is comment; don't bother parsing it
                         case '?':
-                            // TODO add docs
+                            cout("+,-,*,/,% : Add, Subtract, Multiply, Divide, Mod");
+                            cout("c: Clear the stack");
+                            cout("f: Print all contents of the stack");
+                            cout("^: a^b ");
+                            cout("v: Square root");
+                            cout("|: Current input base");
+                            cout("k: Set the scale factor");
+                            cout("K: Push the scale factor");
+                            cout("z: Push the number of items");
+                            cout("Z: Push the length of the top item");
+                            cout("X: Replace top number with its scale factor");
+                            cout("d: Duplicate the top of the stack");
+                            cout("r: Swap the top 2 values");
+                            cout("i: Change input base");
+                            cout("I: Push current input base");
+                            cout("o: Change output base");
+                            cout("O: Push current output base");
+                            cout("s"); //TODO: Add desc of s
+                            cout("S"); // TODO: Add desc of S
+                            cout("l"); // TODO: Add desc of l
+                            cout("L"); //TODO: Add desc of L
                             break;
                         case '+':
                             validateStackDepth(2);
