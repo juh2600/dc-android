@@ -1,3 +1,8 @@
+/**
+ * a partial dc implementation in Java for Android
+ * @author Joe Reed
+ * @author Damon Larcom
+ */
 package com.example.dc;
 
 import androidx.appcompat.app.AppCompatActivity;
