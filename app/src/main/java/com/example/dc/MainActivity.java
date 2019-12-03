@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Stack;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView stdout, stderr;
 
     private Stack<BigDecimal> mainStack;
+    private ArrayList<Stack<BigDecimal>> namedStacks;
     private Calculator calc;
 
     private static class Radices {
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
         stdout = findViewById(R.id.tvOutput);
         stderr = stdout;
         mainStack = new Stack<>();
+        namedStacks = new ArrayList<>();
+        for (int i = 0; i < 256; i++) {
+            namedStacks.add(new Stack<BigDecimal>());
+        }
         calc = new Calculator();
         //https://stackoverflow.com/a/4889059/6627273
         TextView.OnEditorActionListener enterListener = new TextView.OnEditorActionListener() {
@@ -122,6 +128,33 @@ public class MainActivity extends AppCompatActivity {
 
     private void validateStackDepth(int depth) {
         validateStackDepth(depth, mainStack);
+    }
+
+    private BigDecimal warnIfNotInteger(BigDecimal input, String desc) {
+        if (input.scale() != 0) {
+            cerr("dc: runtime warning: non-zero scale" + (desc.isEmpty() ? "" : " in " + desc));
+        }
+        return input;
+    }
+
+    private int roundOffToInt(BigDecimal input, String desc) {
+        return warnIfNotInteger(input, desc).intValue();
+    }
+
+    private int roundOffToInt(BigDecimal input) {
+        return roundOffToInt(input, "");
+    }
+
+    private BigDecimal roundOff(BigDecimal input, String desc) {
+        return warnIfNotInteger(input, desc).setScale(0, RoundingMode.DOWN);
+    }
+
+    private BigDecimal roundOff(BigDecimal input) {
+        return roundOff(input, "");
+    }
+
+    private Stack<BigDecimal> getNamedStack(Character name) {
+        return namedStacks.get((int)name);
     }
 
     /**
@@ -240,14 +273,11 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case '^':
                             validateStackDepth(2);
-                            if (mainStack.peek().scale() != 0) {
-                                cerr("dc: runtime warning: non-zero scale in exponent");
-                            }
-                            mainStack.push(calc.pow(mainStack.pop(), mainStack.pop()));
+                            mainStack.push(calc.pow(roundOffToInt(mainStack.pop(), "exponent"), mainStack.pop()));
                             break;
                         case '|':
                             validateStackDepth(3);
-                            cerr("dc: | (modular exponentiation): unimplemented"); // TODO
+                            mainStack.push(calc.modexp(warnIfNotInteger(mainStack.pop(), "modulus"), roundOffToInt(mainStack.pop(), "exponent"), mainStack.pop()));
                             break;
                         case 'v':
                             validateStackDepth(1);
@@ -291,10 +321,67 @@ public class MainActivity extends AppCompatActivity {
                         case 'o':
                             validateStackDepth(1);
                             Radices.output = new BigDecimal(mainStack.pop().toBigInteger());
+                            cerr("dc: runtime warning: output radix is unused; all output is decimal");
                             // TODO make use of output radix
                             break;
                         case 'O':
                             mainStack.push(Radices.output);
+                            break;
+                        case 's':
+                            validateStackDepth(1);
+                            Character sName;
+                            if (input.isEmpty()) sName = '\n';
+                            else {
+                                sName = input.get(0);
+                                input.remove(0);
+                            }
+                            if (namedStacks.size() < (int) sName)
+                                throw new Exception("dc: register name out of bounds: " + sName);
+                            if (namedStacks.get((int) sName).size() == 0)
+                                namedStacks.get((int) sName).push(mainStack.pop());
+                            else
+                                namedStacks.get((int) sName).set(0, mainStack.pop());
+                            break;
+                        case 'S':
+                            validateStackDepth(1);
+                            Character SName;
+                            if (input.isEmpty()) SName = '\n';
+                            else {
+                                SName = input.get(0);
+                                input.remove(0);
+                            }
+                            if (namedStacks.size() < (int) SName)
+                                throw new Exception("dc: register name out of bounds: " + SName);
+                            namedStacks.get((int) SName).push(mainStack.pop());
+                            break;
+                        case 'l':
+                            Character lName;
+                            if (input.isEmpty()) lName = '\n';
+                            else {
+                                lName = input.get(0);
+                                input.remove(0);
+                            }
+                            if (namedStacks.size() < (int) lName)
+                            throw new Exception("dc: register name out of bounds: " + lName);
+                            if(getNamedStack(lName).isEmpty())
+                                mainStack.push(BigDecimal.ZERO);
+                            else mainStack.push(getNamedStack(lName).peek());
+                            break;
+                        case 'L':
+                            Character LName;
+                            if (input.isEmpty()) LName = '\n';
+                            else {
+                                LName = input.get(0);
+                                input.remove(0);
+                            }
+                            if (namedStacks.size() < (int) LName)
+                                throw new Exception("dc: register name out of bounds: " + LName);
+                            try {
+                                validateStackDepth(1, getNamedStack(LName));
+                                mainStack.push(getNamedStack(LName).pop());
+                            } catch(EmptyStackException e) {
+                                cerr("dc: stack register '"+LName+"' (0"+Integer.toOctalString((int)LName)+") is empty");
+                            }
                             break;
                         case 'c':
                             mainStack.clear();
